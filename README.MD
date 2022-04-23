@@ -22,6 +22,8 @@ npm install @vodyani/validator
 
 ## Dependencies
 
+- [class-transformer](https://github.com/typestack/class-transformer) `v0.5`
+- [class-validator](https://github.com/typestack/class-validator) `v0.13`
 - [lodash](https://github.com/lodash/lodash) `v4`
 
 ## License
