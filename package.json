@@ -1,0 +1,90 @@
+{
+  "name": "@vodyani/validator",
+  "license": "MIT",
+  "version": "0.0.1",
+  "author": "ChoGathK",
+  "description": "🔍 Provides easy-to-use validation methods and decorators.",
+  "homepage": "https://github.com/vodyani/validator#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vodyani/validator.git"
+  },
+  "keywords": [
+    "vodyani",
+    "nodejs",
+    "validator",
+    "class-validator",
+    "javascript",
+    "typescript",
+    "npm-package"
+  ],
+  "bugs": {
+    "url": "https://github.com/vodyani/validator/issues"
+  },
+  "files": [
+    "package.json",
+    "README.MD",
+    "LICENSE",
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version major",
+    "install:all": "npm i && npm i @vodyani/eslint-config -D && npx husky install",
+    "build": "rm -rf dist && tsc",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint ./src ./test && tsc",
+    "lint:fix": "eslint --fix --ext .ts src/ test/",
+    "lint:html-report": "eslint ./src ./test -f html -o eslint-report.html",
+    "lint:json-report": "eslint ./src ./test -f json -o eslint-report.json"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "@vodyani"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testRegex": "(/test/.spec.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleNameMapper": {
+      "@/(.*)$": "<rootDir>/src/$1"
+    },
+    "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.ts$": "ts-jest"
+    },
+    "transformIgnorePatterns": [
+      "./node_modules/(?!(lodash-es|other-es-lib))"
+    ]
+  },
+  "dependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13"
+  },
+  "peerDependencies": {
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "reflect-metadata": "^0.1.13"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "16.2.3",
+    "@commitlint/config-conventional": "16.2.1",
+    "@nestjs/common": "^8.4.4",
+    "@types/jest": "27.4.1",
+    "@types/lodash": "^4.14.181",
+    "@types/node": "16.11.26",
+    "@vodyani/eslint-config": "^1.0.9",
+    "husky": "7.0.4",
+    "jest": "27.5.1",
+    "ts-jest": "27.1.4",
+    "typescript": "4.6.3"
+  }
+}
