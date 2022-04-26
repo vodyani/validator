@@ -6,7 +6,7 @@
 [![Npm](https://img.shields.io/npm/dm/@vodyani/validator)](https://www.npmjs.com/package/@vodyani/validator)
 [![License](https://img.shields.io/github/license/vodyani/validator)](LICENSE)
 ![Workflow](https://github.com/vodyani/validator/actions/workflows/release.yml/badge.svg)
-[![codecov](https://codecov.io/gh/vodyani/validator/branch/main/graph/badge.svg?token=YHBHSZH5PB)](https://codecov.io/gh/vodyani/validator)
+[![codecov](https://codecov.io/gh/vodyani/validator/branch/master/graph/badge.svg?token=O0BNXIWW1M)](https://codecov.io/gh/vodyani/validator)
 [![Known Vulnerabilities](https://snyk.io/test/github/vodyani/validator/badge.svg?targetFile=package.json)](https://snyk.io/test/github/vodyani/validator?targetFile=package.json)
 
 ## Installation
@@ -16,6 +16,7 @@ npm install @vodyani/validator
 ```
 
 ## Recommendations
+> [Get started with documentation](https://vodyani.vercel.app/docs/advanced/validator)
 
 - typescript `v4.6.x`
 - node.js `v12.x` ~ `v16.x`
