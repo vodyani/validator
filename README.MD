@@ -22,7 +22,8 @@ npm install @vodyani/validator
 
 ## Dependencies
 
-- [class-transformer](https://github.com/typestack/class-transformer) `v0.5`
+- [vodyani/transformer](https://github.com/vodyani/transformer) `v0.5`
+- [reflect-metadata](https://github.com/rbuckton/reflect-metadata) `v0.1`
 - [class-validator](https://github.com/typestack/class-validator) `v0.13`
 - [lodash](https://github.com/lodash/lodash) `v4`
 

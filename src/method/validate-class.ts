@@ -1,15 +1,19 @@
-import { plainToClass } from 'class-transformer';
+import { classAssemble } from '@vodyani/transformer';
 import { validate, ValidatorOptions } from 'class-validator';
 
 import { Class } from '../common';
 
 import { isValidArray, isValidObject } from './validate';
 
-export async function toValidateClass(type: Class, data: any, options?: ValidatorOptions) {
+export async function toValidateClass(
+  type: Class,
+  data: any,
+  options?: ValidatorOptions,
+) {
   let errorMessage: any = null;
 
   if (type) {
-    const errors = await validate(plainToClass(type, data), options);
+    const errors = await validate(classAssemble(type, data), options);
 
     if (isValidArray(errors)) {
       const stack = [];

@@ -45,7 +45,6 @@ export function EachValidated(type: Class) {
 export function ParamValidate(options?: ParamValidateDecoratorOptions) {
   return function(target: any, property: string, descriptor: TypedPropertyDescriptor<PromiseType>) {
     const method = descriptor.value;
-    const source = `${target.constructor.name}.${property}`;
 
     descriptor.value = async function(...args: any[]) {
       toValidateRequired(args, target, property, options?.Mode || Error);
@@ -54,13 +53,8 @@ export function ParamValidate(options?: ParamValidateDecoratorOptions) {
 
       await toEachValidate(args, target, property, options?.Mode || Error, options?.validate);
 
-      try {
-        const result = await method.apply(this, args);
-        return result;
-      } catch (error) {
-        error.message = `${error.message} from ${source}`;
-        throw error;
-      }
+      const result = await method.apply(this, args);
+      return result;
     };
 
     return descriptor;

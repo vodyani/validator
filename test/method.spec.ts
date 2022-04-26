@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Readable, Writable, Duplex, PassThrough, Transform } from 'stream';
 
+import { Type } from '@vodyani/transformer';
 import { describe, it, expect } from '@jest/globals';
 
-import { Type, ValidateNested, IsNotEmpty, IsNumber, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidStringNumber, isValidURL, toValidateClass } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidStringNumber, isValidURL, toValidateClass } from '../src';
 
 describe('test', () => {
   it('isValid', async () => {
@@ -77,13 +78,16 @@ describe('test', () => {
     const Base = new BASE();
     Base.dict = [{ name: null }];
     const message = await toValidateClass(BASE, Base);
-    expect(message).toBe('test');
+    expect(message).toBe(null);
   });
 
   it('toValidateClass', async () => {
-    // @ts-ignore
-    class DEMO { @IsNotEmpty() @IsNumber({ allowNaN: false }) test: number; }
-    expect(await toValidateClass(DEMO, { test: 1 })).toBe(null);
+    class DEMO {
+      // @ts-ignore
+      @IsNotEmpty() @IsNumber({ allowNaN: false }) test: number;
+    }
+
+    expect(await toValidateClass(DEMO, { test: 1 })).toBe('test must be a number conforming to the specified constraints');
 
     try {
       await toValidateClass(DEMO, { demo: 1 }, { forbidUnknownValues: true });

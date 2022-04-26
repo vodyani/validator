@@ -2,14 +2,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, it, expect } from '@jest/globals';
 import { UnauthorizedException } from '@nestjs/common';
+import { Type, Expose, SetTransform, MapTransform, ValueTransform, Assemble, convertNumber, convertString } from '@vodyani/transformer';
 
-import { IsNotEmpty, IsNumber, isValid, IsString, ParamValidate, ValidateIf, Validated, Required, EachValidated } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, isValid, IsArray, IsObject, IsString, ParamValidate, ValidateIf, Validated, Required, EachValidated } from '../src';
+
+// base test
 
 class DemoData {
   // @ts-ignore
-  @IsNumber({ allowNaN: false }, { message: 'number is not valid' }) @IsNotEmpty({ message: 'id is required' }) public id: number;
+  @Expose() @IsNumber({ allowNaN: false }, { message: 'number is not valid' }) @IsNotEmpty({ message: 'id is required' }) public id: number;
   // @ts-ignore
-  @ValidateIf((item: DemoData) => isValid(item.name)) @IsString({ message: 'name is not valid' }) public name?: string;
+  @Expose() @ValidateIf((item: DemoData) => isValid(item.name)) @IsString({ message: 'name is not valid' }) public name?: string;
 }
 
 class Demo {
@@ -30,7 +33,7 @@ class Demo {
   @ParamValidate({ Mode: UnauthorizedException }) async getData7(@EachValidated(DemoData) list: DemoData[]) { throw new Error('test') }
 }
 
-describe('decorator.validate', () => {
+describe('base test', () => {
   it('ParamValidate', async () => {
     const demo = new Demo();
 
@@ -90,6 +93,67 @@ describe('decorator.validate', () => {
 
     try {
       await demo.getData7([{ id: 1, name: 'test' }]);
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
+  });
+});
+
+// advanced test
+
+class User {
+  // @ts-ignore
+  @IsString() @Expose() public name: string;
+  // @ts-ignore
+  @IsNumber() @Expose() @ValueTransform(convertNumber) public age: number;
+}
+
+class Demo2 {
+  // @ts-ignore
+  @IsObject() @ValidateNested() @Expose() @Type(() => User) public user: User;
+  // @ts-ignore
+  @IsArray() @ValidateNested({ each: true }) @Expose() @Type(() => User) public userArray: User[];
+  // @ts-ignore
+  @IsNotEmpty() @ValidateNested({ each: true }) @Expose() @SetTransform(User) public userSet: Set<User>;
+  // @ts-ignore
+  @IsNotEmpty() @ValidateNested({ each: true }) @Expose() @MapTransform(User) public userMap: Map<string, User>;
+}
+
+class Service {
+  @Assemble(Demo2)
+  // @ts-ignore
+  public async getDemo2(): Promise<Demo2> {
+    const user = { name: 'vodyani', age: 'USER' };
+    const userArray = [{ name: 'vodyani', age: '20' }];
+    const userSet = new Set([{ name: 'vodyani', age: '20' }]);
+    const userMap = new Map([['vodyani', { name: 'vodyani', age: '20' }]]);
+    return { user, userArray, userSet, userMap } as any;
+  }
+
+  @ParamValidate()
+  // @ts-ignore
+  public async test(@Validated demo2: Demo2) {
+    return demo2;
+  }
+}
+
+describe('advanced test', () => {
+  it('test pass validation', async () => {
+    const service = new Service();
+    const demo2 = await service.getDemo2();
+    const result = await service.test(demo2);
+    expect(result).toEqual(demo2);
+  });
+
+  it('failed', async () => {
+    const service = new Service();
+    try {
+      await service.test({
+        user: { name: 'vodyani', age: 'USER' },
+        userArray: [{ name: 'vodyani', age: '20' }],
+        userSet: new Set([{ name: 'vodyani', age: '20' }]),
+        userMap: new Map([['vodyani', { age: '20' }]]),
+      } as any);
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
