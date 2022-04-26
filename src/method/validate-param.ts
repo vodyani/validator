@@ -1,6 +1,4 @@
-import { ValidatorOptions } from 'class-validator';
-
-import { Class, EachValidatedKey, ParamValidateOptions, RequiredKey, ValidatedKey } from '../common';
+import { Class, EachValidatedKey, ValidateMetaData, RequiredKey, ValidatedKey, ClassValidateOptions } from '../common';
 
 import { getReflectOwnMetadata, getReflectParamTypes } from './reflect';
 import { toValidateClass } from './validate-class';
@@ -12,7 +10,7 @@ export function toValidateRequired(
   property: string,
   Mode: Class<Error>,
 ) {
-  const prams: ParamValidateOptions[] = getReflectOwnMetadata(RequiredKey, target, property);
+  const prams: ValidateMetaData[] = getReflectOwnMetadata(RequiredKey, target, property);
 
   for (const { index, message } of prams) {
     if (args.length < index || !isValid(args[index])) {
@@ -26,10 +24,10 @@ export async function toValidated(
   target: any,
   property: string,
   Mode: Class<Error>,
-  options: ValidatorOptions,
+  options: ClassValidateOptions,
 ) {
   const types = getReflectParamTypes(target, property);
-  const prams: ParamValidateOptions[] = getReflectOwnMetadata(ValidatedKey, target, property);
+  const prams: ValidateMetaData[] = getReflectOwnMetadata(ValidatedKey, target, property);
 
   for (const { index } of prams) {
     const item = args[index];
@@ -48,9 +46,9 @@ export async function toEachValidate(
   target: any,
   property: string,
   Mode: Class<Error>,
-  options: ValidatorOptions,
+  options: ClassValidateOptions,
 ) {
-  const prams: ParamValidateOptions[] = getReflectOwnMetadata(EachValidatedKey, target, property);
+  const prams: ValidateMetaData[] = getReflectOwnMetadata(EachValidatedKey, target, property);
 
   for (const { index, type } of prams) {
     const data = args[index];

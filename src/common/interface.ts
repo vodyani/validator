@@ -1,16 +1,21 @@
 import { ValidatorOptions } from 'class-validator';
+import { ClassTransformOptions } from '@vodyani/transformer';
 
 export interface Class<T = any> extends Function {
   new (...args: any[]): T;
 }
 
-export interface ParamValidateOptions {
+export interface ValidateMetaData {
   index: number;
   type?: Class;
   message?: string;
 }
 
-export interface ParamValidateDecoratorOptions {
-  Mode?: Class<Error>;
+export interface ClassValidateOptions {
   validate?: ValidatorOptions;
+  transform?: ClassTransformOptions;
+}
+
+export interface ParamValidateOptions extends ClassValidateOptions {
+  Mode?: Class<Error>;
 }

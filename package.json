@@ -1,7 +1,7 @@
 {
   "name": "@vodyani/validator",
   "license": "MIT",
-  "version": "0.0.2",
+  "version": "0.13.0",
   "author": "ChoGathK",
   "description": "🔍 Provides easy-to-use validation methods and decorators.",
   "homepage": "https://github.com/vodyani/validator#readme",
@@ -64,24 +64,24 @@
     ]
   },
   "dependencies": {
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
-    "lodash": "^4.17.21",
+    "@vodyani/transformer": "^0.5.3",
+    "class-validator": "0.13.2",
+    "lodash": "4.17.21",
     "reflect-metadata": "^0.1.13"
   },
   "peerDependencies": {
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
+    "class-validator": "0.13.2",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@commitlint/cli": "16.2.3",
     "@commitlint/config-conventional": "16.2.1",
-    "@nestjs/common": "^8.4.4",
+    "@nestjs/common": "8.4.4",
+    "@nestjs/swagger": "^5.2.1",
     "@types/jest": "27.4.1",
-    "@types/lodash": "^4.14.181",
+    "@types/lodash": "4.14.182",
     "@types/node": "16.11.26",
-    "@vodyani/eslint-config": "^1.0.9",
+    "@vodyani/eslint-config": "1.0.9",
     "husky": "7.0.4",
     "jest": "27.5.1",
     "ts-jest": "27.1.4",

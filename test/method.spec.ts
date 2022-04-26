@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Readable, Writable, Duplex, PassThrough, Transform } from 'stream';
 
+import { PickType } from '@nestjs/swagger';
 import { describe, it, expect } from '@jest/globals';
+import { Expose, Type, SetTransform, MapTransform } from '@vodyani/transformer';
 
-import { Type, ValidateNested, IsNotEmpty, IsNumber, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidStringNumber, isValidURL, toValidateClass } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, IsString, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidStringNumber, isValidURL, toValidateClass } from '../src';
 
 describe('test', () => {
   it('isValid', async () => {
@@ -77,31 +79,7 @@ describe('test', () => {
     const Base = new BASE();
     Base.dict = [{ name: null }];
     const message = await toValidateClass(BASE, Base);
-    expect(message).toBe('test');
-  });
-
-  it('toValidateClass', async () => {
-    // @ts-ignore
-    class DEMO { @IsNotEmpty() @IsNumber({ allowNaN: false }) test: number; }
-    expect(await toValidateClass(DEMO, { test: 1 })).toBe(null);
-
-    try {
-      await toValidateClass(DEMO, { demo: 1 }, { forbidUnknownValues: true });
-    } catch (error) {
-      expect(!!error).toBe(true);
-    }
-
-    try {
-      await toValidateClass(DEMO, { test: Number('test') });
-    } catch (error) {
-      expect(!!error).toBe(true);
-    }
-
-    try {
-      await toValidateClass(DEMO, { test: 'test' });
-    } catch (error) {
-      expect(!!error).toBe(true);
-    }
+    expect(message).toBe(null);
   });
 
   it('isValidURL', async () => {
@@ -136,5 +114,49 @@ describe('test', () => {
     expect(isValidStream(new Duplex())).toBe(true);
     expect(isValidStream(new Transform())).toBe(true);
     expect(isValidStream(new PassThrough())).toBe(true);
+  });
+
+  it('toValidateClass', async () => {
+    class DEMO {
+      // @ts-ignore
+      @Expose() @IsNotEmpty() @IsNumber({ allowNaN: false }) test: number;
+    }
+
+    class Test {
+      // @ts-ignore
+      @IsNotEmpty() @IsNumber({ allowNaN: false }) @Expose() age: number;
+      // @ts-ignore
+      @IsNotEmpty() @IsString() @Expose() name: string;
+    }
+
+    class PartOfDemo extends PickType(Test, ['name']) {}
+
+    class Dict {
+      // @ts-ignore
+      @ValidateNested() @Expose() @Type(() => PartOfDemo) public item: PartOfDemo;
+      // @ts-ignore
+      @ValidateNested({ each: true }) @Expose() @Type(() => PartOfDemo) public array: PartOfDemo[];
+      // @ts-ignore
+      @ValidateNested({ each: true }) @Expose() @SetTransform(PartOfDemo) public set: Set<PartOfDemo>;
+      // @ts-ignore
+      @ValidateNested({ each: true }) @Expose() @MapTransform(PartOfDemo) public map: Map<string, PartOfDemo>;
+    }
+
+    expect(await toValidateClass(DEMO, { test: 1 })).toBe(null);
+    expect(
+      await toValidateClass(
+        DEMO,
+        { demo: 1 },
+        {
+          validate: { forbidUnknownValues: true },
+        },
+      ),
+    ).toBe('test must be a number conforming to the specified constraints');
+
+    expect(await toValidateClass(DEMO, { test: Number('test') })).toBe('test must be a number conforming to the specified constraints');
+    expect(await toValidateClass(DEMO, { test: 'test' })).toBe('test must be a number conforming to the specified constraints');
+    expect(await toValidateClass(PartOfDemo, { name: 'test' })).toBe(null);
+    expect(await toValidateClass(PartOfDemo, { name: 1 })).toBe('name must be a string');
+    expect(await toValidateClass(Dict, { item: { name: 1 }})).toBe('name must be a string');
   });
 });
