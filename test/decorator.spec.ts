@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, it, expect } from '@jest/globals';
 import { UnauthorizedException } from '@nestjs/common';
-import { Type, Expose, SetTransform, MapTransform, ValueTransform, Assemble, convertNumber, convertString } from '@vodyani/transformer';
+import { Type, Expose, TransformSet, TransformMap, TransformValue, Assemble, toNumber, toString } from '@vodyani/transformer';
 
-import { ValidateNested, IsNotEmpty, IsNumber, isValid, IsArray, IsObject, IsString, ParamValidate, ValidateIf, Validated, Required, EachValidated } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, isValid, IsArray, IsObject, IsString, ArgumentValidate, ValidateIf, Validated, Required, EachValidated } from '../src';
 
 // base test
 
@@ -16,25 +16,25 @@ class DemoData {
 }
 
 class Demo {
-  @ParamValidate()
+  @ArgumentValidate()
   // @ts-ignore
   async getData(@Validated data: DemoData) { return data }
   // @ts-ignore
-  @ParamValidate({ validate: { forbidUnknownValues: true }}) async getData2(@Validated data: DemoData) { return data }
+  @ArgumentValidate({ validate: { forbidUnknownValues: true }}) async getData2(@Validated data: DemoData) { return data }
   // @ts-ignore
-  @ParamValidate({ Mode: UnauthorizedException }) async getData3(@Validated data: DemoData, @Required('test') name?: string) { return { name, data } }
+  @ArgumentValidate({ Mode: UnauthorizedException }) async getData3(@Validated data: DemoData, @Required('test') name?: string) { return { name, data } }
   // @ts-ignore
-  @ParamValidate() async getData4(@EachValidated(DemoData) list: DemoData[]) { return list }
+  @ArgumentValidate() async getData4(@EachValidated(DemoData) list: DemoData[]) { return list }
   // @ts-ignore
-  @ParamValidate({ Mode: UnauthorizedException }) async getData5(@Required() list: DemoData[]) { return list }
+  @ArgumentValidate({ Mode: UnauthorizedException }) async getData5(@Required() list: DemoData[]) { return list }
   // @ts-ignore
-  @ParamValidate({ Mode: UnauthorizedException }) async getData6(@EachValidated(DemoData) list: DemoData[]) { return list }
+  @ArgumentValidate({ Mode: UnauthorizedException }) async getData6(@EachValidated(DemoData) list: DemoData[]) { return list }
   // @ts-ignore
-  @ParamValidate({ Mode: UnauthorizedException }) async getData7(@EachValidated(DemoData) list: DemoData[]) { throw new Error('test') }
+  @ArgumentValidate({ Mode: UnauthorizedException }) async getData7(@EachValidated(DemoData) list: DemoData[]) { throw new Error('test') }
 }
 
 describe('base test', () => {
-  it('ParamValidate', async () => {
+  it('ArgumentValidate', async () => {
     const demo = new Demo();
 
     const data = await demo.getData({ id: 1, name: 'test' });
@@ -44,7 +44,7 @@ describe('base test', () => {
     expect(data2.id).toEqual(2);
 
     try {
-      await demo.getData({ id: null });
+      await demo.getData({ id: null as any });
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
@@ -80,13 +80,13 @@ describe('base test', () => {
     }
 
     try {
-      await demo.getData5(null);
+      await demo.getData5(null as any);
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
 
     try {
-      await demo.getData6(null);
+      await demo.getData6(null as any);
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }
@@ -105,7 +105,7 @@ class User {
   // @ts-ignore
   @IsString() @Expose() public name: string;
   // @ts-ignore
-  @IsNumber() @Expose() @ValueTransform(convertNumber) public age: number;
+  @IsNumber() @Expose() @TransformValue(toNumber) public age: number;
 }
 
 class Demo2 {
@@ -114,9 +114,9 @@ class Demo2 {
   // @ts-ignore
   @IsArray() @ValidateNested({ each: true }) @Expose() @Type(() => User) public userArray: User[];
   // @ts-ignore
-  @IsNotEmpty() @ValidateNested({ each: true }) @Expose() @SetTransform(User) public userSet: Set<User>;
+  @IsNotEmpty() @ValidateNested({ each: true }) @Expose() @TransformSet(User) public userSet: Set<User>;
   // @ts-ignore
-  @IsNotEmpty() @ValidateNested({ each: true }) @Expose() @MapTransform(User) public userMap: Map<string, User>;
+  @IsNotEmpty() @ValidateNested({ each: true }) @Expose() @TransformMap(User) public userMap: Map<string, User>;
 }
 
 class Service {
@@ -130,7 +130,7 @@ class Service {
     return { user, userArray, userSet, userMap } as any;
   }
 
-  @ParamValidate()
+  @ArgumentValidate()
   // @ts-ignore
   public async test(@Validated demo2: Demo2) {
     return demo2;

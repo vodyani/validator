@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { classAssemble } from '@vodyani/transformer';
+import { toAssemble } from '@vodyani/transformer';
 
 import { Class, ClassValidateOptions } from '../common';
 
@@ -16,7 +16,7 @@ export async function toValidateClass(
 
   if (type) {
     const errors = await validate(
-      classAssemble(type, data, transformOptions),
+      toAssemble(type, data, transformOptions),
       validateOptions,
     );
 

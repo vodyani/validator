@@ -11,7 +11,7 @@ import {
   ValidatedKey,
   EachValidatedKey,
   ValidateMetaData,
-  ParamValidateOptions,
+  ArgumentValidateOptions,
 } from '../common';
 
 export function Required(message?: string) {
@@ -42,7 +42,7 @@ export function EachValidated(type: Class) {
   };
 }
 
-export function ParamValidate(options?: ParamValidateOptions) {
+export function ArgumentValidate(options?: ArgumentValidateOptions) {
   return function(target: any, property: string, descriptor: TypedPropertyDescriptor<PromiseType>) {
     const method = descriptor.value;
 

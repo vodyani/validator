@@ -16,6 +16,6 @@ export interface ClassValidateOptions {
   transform?: ClassTransformOptions;
 }
 
-export interface ParamValidateOptions extends ClassValidateOptions {
+export interface ArgumentValidateOptions extends ClassValidateOptions {
   Mode?: Class<Error>;
 }
