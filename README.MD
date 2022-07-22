@@ -37,12 +37,12 @@ Use decorators to complete the verification of internal class properties.
 
 |Features|Type|Description|
 |:-:|:-:|:-:|
-|[toValidateClass](#toassemble)|method||
-|[ArgumentValidator](#assemble)|decorator||
-|[Required](#transformvalue)|decorator||
-|[Validated](#transformset)|decorator||
-|[EachValidated](#transformmap)|decorator||
-|[CustomValidated](#transformmap)|decorator||
+|[toValidateClass](#toassemble)|method|Validate the class structure against the incoming classes and data.|
+|[ArgumentValidator](#argumentvalidator)|decorator|Method validator, needs to be used in combination with other parameter decorators.|
+|[Required](#required)|decorator|Specify a method parameter that must be passed in, or throw an exception.|
+|[Validated](#validated)|decorator|Specify a method parameter for the method that needs to be executed in the validator.|
+|[EachValidated](#eachvalidated)|decorator|Specify a method parameter that needs to be executed in the validator, and this parameter needs to be looped through.|
+|[CustomValidated](#customvalidated)|decorator|Validate parameters using custom validators.|
 
 ### toValidateClass
 
