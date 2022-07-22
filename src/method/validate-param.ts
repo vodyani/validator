@@ -16,7 +16,7 @@ export function toValidateRequired(
 
   for (const { index, message } of metaArgs) {
     if (args.length < index || !isValid(args[index])) {
-      throw new Mode(message || 'missing required argument');
+      throw new Mode(message || 'missing required argument !');
     }
   }
 }

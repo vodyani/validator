@@ -24,7 +24,7 @@ import {
  * - This is a parameter Decorator.
  * - Must be used in conjunction with the method decorator: `ArgumentValidator` !
  *
- * @param message The error message. (default: `missing required argument`)
+ * @param message The error message. (default: `missing required argument !`)
  *
  * @publicApi
  */
@@ -61,6 +61,8 @@ export function Validated(target: any, property: any, index: number) {
  * - This is a parameter Decorator.
  * - Must be used in conjunction with the method decorator: `ArgumentValidator` !
  *
+ * @param type The classes that need to be validated.
+ *
  * @publicApi
  */
 export function EachValidated(type: Class) {
@@ -74,14 +76,14 @@ export function EachValidated(type: Class) {
   };
 }
 /**
- * 使用自定义验证器验证参数
+ * Validate parameters using custom validators.
  *
  * @tips
  * - This is a parameter Decorator.
  * - Must be used in conjunction with the method decorator: `ArgumentValidator` !
  *
- * @param validator
- * @param message
+ * @param validator The validation function.
+ * @param message The error message.
  *
  * @publicApi
  */
@@ -98,7 +100,7 @@ export function CustomValidated(validator: ValidateMethod, message: string) {
 /**
  * Method validator, needs to be used in combination with other parameter decorators.
  *
- * @param options The class-validator options.
+ * @param options The argument validator options.
  *
  * @publicApi
  */
