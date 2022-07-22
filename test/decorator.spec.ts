@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, it, expect } from '@jest/globals';
 import { UnauthorizedException } from '@nestjs/common';
-import { Type, Expose, TransformSet, TransformMap, TransformValue, Assemble, toNumber, toString } from '@vodyani/transformer';
+import { Type, Expose, TransformSet, TransformMap, TransformValue, Assemble, toNumber } from '@vodyani/transformer';
 
-import { ValidateNested, IsNotEmpty, IsNumber, isValid, IsArray, IsObject, IsString, ArgumentValidator, ValidateIf, Validated, Required, EachValidated } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, isValid, IsArray, IsObject, IsString, ArgumentValidator, ValidateIf, Validated, Required, EachValidated, CustomValidated, isValidBuffer } from '../src';
 
 // base test
 
@@ -34,6 +34,8 @@ class Demo {
   @ArgumentValidator() async getData8(@EachValidated(DemoData) map: Map<DemoData>) { return map }
   // @ts-ignore
   @ArgumentValidator() async getData9(@EachValidated(DemoData) set: Set<DemoData>) { return set }
+  // @ts-ignore
+  @ArgumentValidator() async getData10(@CustomValidated(isValidBuffer, 'not buffer') buffer: Buffer<any>) { return buffer }
 }
 
 describe('base test', () => {
@@ -116,6 +118,12 @@ describe('base test', () => {
     try {
       const map2 = new Set([Object()]);
       await demo.getData9(map2);
+    } catch (error) {
+      expect(error).toBeInstanceOf(Error);
+    }
+
+    try {
+      await demo.getData10(null);
     } catch (error) {
       expect(error).toBeInstanceOf(Error);
     }

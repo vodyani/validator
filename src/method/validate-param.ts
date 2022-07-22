@@ -1,6 +1,6 @@
 import { isMap } from 'lodash';
 
-import { Class, EachValidatedKey, ValidateMetaData, RequiredKey, ValidatedKey, ClassValidateOptions } from '../common';
+import { Class, EachValidatedKey, ValidateMetaData, RequiredKey, ValidatedKey, ClassValidateOptions, CustomValidatedKey } from '../common';
 
 import { isValid } from './validate';
 import { toValidateClass } from './validate-class';
@@ -18,6 +18,21 @@ export function toValidateRequired(
     if (args.length < index || !isValid(args[index])) {
       throw new Mode(message || 'missing required argument');
     }
+  }
+}
+
+export function toCustomValidate(
+  args: any[],
+  target: any,
+  property: string,
+  Mode: Class<Error>,
+) {
+  const metaArgs: ValidateMetaData[] = getReflectOwnMetadata(CustomValidatedKey, target, property);
+
+  for (const { index, message, validator } of metaArgs) {
+    const isValidArg = validator(args[index]);
+
+    if (args.length < index || !isValidArg) throw new Mode(message);
   }
 }
 

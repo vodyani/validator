@@ -3,15 +3,18 @@ import {
   toEachValidate,
   toValidateRequired,
   getReflectOwnMetadata,
+  toCustomValidate,
 } from '../method';
 import {
   Class,
-  PromiseMethod,
   RequiredKey,
   ValidatedKey,
+  PromiseMethod,
   EachValidatedKey,
   ValidateMetaData,
+  CustomValidatedKey,
   ArgumentValidateOptions,
+  ValidateMethod,
 } from '../common';
 
 /**
@@ -71,9 +74,29 @@ export function EachValidated(type: Class) {
   };
 }
 /**
- * Method validator, needs to be used in combination with other parameter decorators.
+ * 使用自定义验证器验证参数
  *
- * @tips Support for working with `Required`/`Validated`/`EachValidated`
+ * @tips
+ * - This is a parameter Decorator.
+ * - Must be used in conjunction with the method decorator: `ArgumentValidator` !
+ *
+ * @param validator
+ * @param message
+ *
+ * @publicApi
+ */
+export function CustomValidated(validator: ValidateMethod, message: string) {
+  return function(target: any, property: any, index: number) {
+    const data = getReflectOwnMetadata(CustomValidatedKey, target, property);
+    const metadata: ValidateMetaData = { index, message, validator };
+
+    data.push(metadata);
+
+    Reflect.defineMetadata(CustomValidatedKey, data, target, property);
+  };
+}
+/**
+ * Method validator, needs to be used in combination with other parameter decorators.
  *
  * @param options The class-validator options.
  *
@@ -85,7 +108,9 @@ export function ArgumentValidator(options?: ArgumentValidateOptions) {
     const errorMode = options?.Mode || Error;
 
     descriptor.value = async function(...args: any[]) {
+      toCustomValidate(args, target, property, errorMode);
       toValidateRequired(args, target, property, errorMode);
+
       await toValidated(args, target, property, errorMode, options);
       await toEachValidate(args, target, property, errorMode, options);
 

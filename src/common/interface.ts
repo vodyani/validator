@@ -1,6 +1,8 @@
 import { ValidatorOptions } from 'class-validator';
 import { ClassTransformOptions } from '@vodyani/transformer';
 
+import { ValidateMethod } from './type';
+
 export interface Class<T = any> extends Function {
   new (...args: any[]): T;
 }
@@ -12,6 +14,8 @@ export interface ValidateMetaData {
   type?: Class;
   /** The error message. */
   message?: string;
+  /** The custom validation function */
+  validator?: ValidateMethod;
 }
 
 /**

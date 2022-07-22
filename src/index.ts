@@ -4,6 +4,7 @@ export {
   Required,
   Validated,
   EachValidated,
+  CustomValidated,
   ArgumentValidator,
 } from './decorator';
 
