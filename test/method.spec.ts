@@ -5,7 +5,7 @@ import { PickType } from '@nestjs/swagger';
 import { describe, it, expect } from '@jest/globals';
 import { Expose, Type, TransformSet, TransformMap } from '@vodyani/transformer';
 
-import { ValidateNested, IsNotEmpty, IsNumber, IsString, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidStringNumber, isValidURL, toValidateClass } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, IsString, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidURL, toValidateClass, isValidBuffer } from '../src';
 
 describe('test', () => {
   it('isValid', async () => {
@@ -39,18 +39,6 @@ describe('test', () => {
     expect(isValidNumber(Infinity)).toBe(false);
     expect(isValidNumber(-Infinity)).toBe(false);
     expect(isValidNumber(Number('demo'))).toBe(false);
-  });
-
-  it('isValidStringNumber', async () => {
-    // eslint-disable-next-line no-undefined
-    expect(isValidStringNumber(undefined as any)).toBe(false);
-    expect(isValidStringNumber(null as any)).toBe(false);
-    expect(isValidStringNumber('null')).toBe(false);
-    expect(isValidStringNumber('1')).toBe(true);
-    expect(isValidStringNumber(0 as unknown as string)).toBe(true);
-    expect(isValidStringNumber(Infinity as unknown as string)).toBe(false);
-    expect(isValidStringNumber(-Infinity as unknown as string)).toBe(false);
-    expect(isValidStringNumber(Number('demo') as unknown as string)).toBe(false);
   });
 
   it('isValidObject', async () => {
@@ -102,7 +90,7 @@ describe('test', () => {
     expect(isValidIP('http://127.0.0.1:3000')).toBe(false);
     expect(isValidIP('127.0.0.1:3000')).toBe(false);
     expect(isValidIP('127.0.0.1')).toBe(true);
-    expect(isValidIP('2001:0000:3238:DFE1:63:0000:0000:FEFB', 6)).toBe(true);
+    expect(isValidIP('2001:0000:3238:DFE1:63:0000:0000:FEFB', '6')).toBe(true);
     expect(isValidIP('google.com')).toBe(false);
     expect(isValidIP('http://www.www.subdomain.baidu.com/index/subdir/index.html')).toBe(false);
   });
@@ -114,6 +102,11 @@ describe('test', () => {
     expect(isValidStream(new Duplex())).toBe(true);
     expect(isValidStream(new Transform())).toBe(true);
     expect(isValidStream(new PassThrough())).toBe(true);
+  });
+
+  it('isValidStream', async () => {
+    expect(isValidBuffer(null as any)).toBe(false);
+    expect(isValidBuffer(Buffer.from([]))).toBe(true);
   });
 
   it('toValidateClass', async () => {

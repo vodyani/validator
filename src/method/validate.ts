@@ -1,40 +1,104 @@
 import { Stream } from 'stream';
 
 import { isURL, isIP } from 'class-validator';
-import { isArray, isNil, isString, isNumber, isObject, isEmpty } from 'lodash';
+import { isArray, isNil, isString, isNumber, isObject, isEmpty, isBuffer } from 'lodash';
 
-export function isValid(it: any): boolean {
-  return !isNil(it);
+/**
+ * Checks if the data is non-empty.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValid(data: any): boolean {
+  return !isNil(data);
 }
-
-export function isValidString(it: string): boolean {
-  return isValid(it) && isString(it) && !isEmpty(it);
+/**
+ * Checks if the data is non-empty string.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidString(data: string): boolean {
+  return isValid(data) && isString(data) && !isEmpty(data);
 }
-
-export function isValidNumber(it: number): boolean {
-  return isValid(it) && isNumber(it) && Number.isSafeInteger(it);
+/**
+ * Checks if the data is non-empty number (Also it will not be NAN or plus or minus infinity).
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidNumber(data: number): boolean {
+  return isValid(data) && isNumber(data) && Number.isSafeInteger(data);
 }
-
-export function isValidStringNumber(it: string): boolean {
-  return isValid(it) && isNumber(Number(it)) && Number.isSafeInteger(Number(it));
+/**
+ * Checks if the data is non-empty array.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidArray(data: any[]): boolean {
+  return isValid(data) && isArray(data) && !isEmpty(data);
 }
-
-export function isValidArray(it: any[]): boolean {
-  return isValid(it) && isArray(it) && !isEmpty(it);
+/**
+ * Checks if the data is non-empty object.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidObject(data: any): boolean {
+  return isValid(data) && isObject(data) && !isEmpty(data);
 }
-
-export function isValidObject(it: any): boolean {
-  return isValid(it) && isObject(it) && !isEmpty(it);
+/**
+ * Checks if the data is stream.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidStream(data: Stream) {
+  return isValid(data) && data instanceof Stream;
 }
-
-export function isValidStream(it: Stream) {
-  return isValid(it) && it instanceof Stream;
+/**
+ * Checks if the data is buffer.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidBuffer(data: Buffer) {
+  return isValid(data) && isBuffer(data);
 }
-
-export function isValidURL(it: string) {
-  return isValidString(it) && isURL(it, { require_protocol: ['http', 'https', 'ftp'] });
+/**
+ * Checks if the data is valid url.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidURL(data: string) {
+  return isValidString(data) && isURL(data, { require_protocol: ['http', 'https', 'ftp'] });
 }
-
-export function isValidIP(it: string, version: '4' | '6' | 4 | 6 = '4') {
-  return isValidString(it) && isIP(it, version);
+/**
+ * Checks if the data is valid ip.
+ *
+ * @param data The data to be check.
+ * @returns boolean
+ *
+ * @publicApi
+ */
+export function isValidIP(data: string, version: '4' | '6' = '4') {
+  return isValidString(data) && isIP(data, version);
 }

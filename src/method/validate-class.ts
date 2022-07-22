@@ -5,20 +5,24 @@ import { Class, ClassValidateOptions } from '../common';
 
 import { isValidArray, isValidObject } from './validate';
 
-export async function toValidateClass(
-  type: Class,
-  data: any,
-  options?: ClassValidateOptions,
-) {
-  let errorMessage: any = null;
+/**
+ * Validate the class structure against the incoming classes and data.
+ *
+ * @param type The classes that need to be validated.
+ * @param data The data that needs to be validated.
+ * @param options The rules options for data conversion and validation.
+ * @returns string (error message string)
+ *
+ * @publicApi
+ */
+export async function toValidateClass(type: Class, data: any, options?: ClassValidateOptions) {
+  let errorMessage: string = null;
   const validateOptions = options?.validate;
   const transformOptions = options?.transform;
 
   if (type) {
-    const errors = await validate(
-      toAssemble(type, data, transformOptions),
-      validateOptions,
-    );
+    const metadata = toAssemble(type, data, transformOptions);
+    const errors = await validate(metadata, validateOptions);
 
     if (isValidArray(errors)) {
       const stack = [];
