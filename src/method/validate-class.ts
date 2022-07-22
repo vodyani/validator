@@ -11,7 +11,7 @@ import { isValidArray, isValidObject } from './validate';
  * @param type The classes that need to be validated.
  * @param data The data that needs to be validated.
  * @param options The rules options for data conversion and validation.
- * @returns string (error message string)
+ * @returns string (error message)
  *
  * @publicApi
  */

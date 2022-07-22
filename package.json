@@ -3,7 +3,7 @@
   "license": "MIT",
   "version": "0.13.0",
   "author": "ChoGathK",
-  "description": "🔍 provides easy-to-use validation methods and decorators.",
+  "description": "🔍 validator offers simple-to-use decorators and validation techniques.",
   "homepage": "https://github.com/vodyani/validator#readme",
   "repository": {
     "type": "git",
