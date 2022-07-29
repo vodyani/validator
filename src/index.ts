@@ -4,7 +4,8 @@ export {
   Required,
   Validated,
   EachValidated,
-  ParamValidate,
+  CustomValidated,
+  ArgumentValidator,
 } from './decorator';
 
 export {
@@ -12,10 +13,10 @@ export {
   isValidIP,
   isValidURL,
   isValidArray,
+  isValidString,
   isValidNumber,
   isValidObject,
   isValidStream,
-  isValidString,
-  isValidStringNumber,
+  isValidBuffer,
   toValidateClass,
 } from './method';

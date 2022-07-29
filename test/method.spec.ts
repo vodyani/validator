@@ -3,9 +3,9 @@ import { Readable, Writable, Duplex, PassThrough, Transform } from 'stream';
 
 import { PickType } from '@nestjs/swagger';
 import { describe, it, expect } from '@jest/globals';
-import { Expose, Type, SetTransform, MapTransform } from '@vodyani/transformer';
+import { Expose, Type, TransformSet, TransformMap } from '@vodyani/transformer';
 
-import { ValidateNested, IsNotEmpty, IsNumber, IsString, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidStringNumber, isValidURL, toValidateClass } from '../src';
+import { ValidateNested, IsNotEmpty, IsNumber, IsString, isValid, isValidArray, isValidIP, isValidNumber, isValidObject, isValidStream, isValidString, isValidURL, toValidateClass, isValidBuffer } from '../src';
 
 describe('test', () => {
   it('isValid', async () => {
@@ -21,8 +21,8 @@ describe('test', () => {
 
   it('isValidArray', async () => {
     // eslint-disable-next-line no-undefined
-    expect(isValidArray(undefined)).toBe(false);
-    expect(isValidArray(null)).toBe(false);
+    expect(isValidArray(undefined as any)).toBe(false);
+    expect(isValidArray(null as any)).toBe(false);
     expect(isValidArray([])).toBe(false);
     expect(isValidArray([{}])).toBe(true);
     expect(isValidArray([0])).toBe(true);
@@ -32,25 +32,13 @@ describe('test', () => {
 
   it('isValidNumber', async () => {
     // eslint-disable-next-line no-undefined
-    expect(isValidNumber(undefined)).toBe(false);
-    expect(isValidNumber(null)).toBe(false);
+    expect(isValidNumber(undefined as any)).toBe(false);
+    expect(isValidNumber(null as any)).toBe(false);
     expect(isValidNumber(0)).toBe(true);
     expect(isValidNumber(('0' as unknown as number))).toBe(false);
     expect(isValidNumber(Infinity)).toBe(false);
     expect(isValidNumber(-Infinity)).toBe(false);
     expect(isValidNumber(Number('demo'))).toBe(false);
-  });
-
-  it('isValidStringNumber', async () => {
-    // eslint-disable-next-line no-undefined
-    expect(isValidStringNumber(undefined)).toBe(false);
-    expect(isValidStringNumber(null)).toBe(false);
-    expect(isValidStringNumber('null')).toBe(false);
-    expect(isValidStringNumber('1')).toBe(true);
-    expect(isValidStringNumber(0 as unknown as string)).toBe(true);
-    expect(isValidStringNumber(Infinity as unknown as string)).toBe(false);
-    expect(isValidStringNumber(-Infinity as unknown as string)).toBe(false);
-    expect(isValidStringNumber(Number('demo') as unknown as string)).toBe(false);
   });
 
   it('isValidObject', async () => {
@@ -63,8 +51,8 @@ describe('test', () => {
 
   it('isValidString', async () => {
     // eslint-disable-next-line no-undefined
-    expect(isValidString(undefined)).toBe(false);
-    expect(isValidString(null)).toBe(false);
+    expect(isValidString(undefined as any)).toBe(false);
+    expect(isValidString(null as any)).toBe(false);
     expect(isValidString('')).toBe(false);
     expect(isValidString('demo')).toBe(true);
   });
@@ -77,7 +65,7 @@ describe('test', () => {
     class BASE { @ValidateNested() @Type(() => DICT) public dict: DICT[]; }
 
     const Base = new BASE();
-    Base.dict = [{ name: null }];
+    Base.dict = [{ name: null as any }];
     const message = await toValidateClass(BASE, Base);
     expect(message).toBe(null);
   });
@@ -102,18 +90,23 @@ describe('test', () => {
     expect(isValidIP('http://127.0.0.1:3000')).toBe(false);
     expect(isValidIP('127.0.0.1:3000')).toBe(false);
     expect(isValidIP('127.0.0.1')).toBe(true);
-    expect(isValidIP('2001:0000:3238:DFE1:63:0000:0000:FEFB', 6)).toBe(true);
+    expect(isValidIP('2001:0000:3238:DFE1:63:0000:0000:FEFB', '6')).toBe(true);
     expect(isValidIP('google.com')).toBe(false);
     expect(isValidIP('http://www.www.subdomain.baidu.com/index/subdir/index.html')).toBe(false);
   });
 
   it('isValidStream', async () => {
-    expect(isValidStream(null)).toBe(false);
+    expect(isValidStream(null as any)).toBe(false);
     expect(isValidStream(new Readable())).toBe(true);
     expect(isValidStream(new Writable())).toBe(true);
     expect(isValidStream(new Duplex())).toBe(true);
     expect(isValidStream(new Transform())).toBe(true);
     expect(isValidStream(new PassThrough())).toBe(true);
+  });
+
+  it('isValidStream', async () => {
+    expect(isValidBuffer(null as any)).toBe(false);
+    expect(isValidBuffer(Buffer.from([]))).toBe(true);
   });
 
   it('toValidateClass', async () => {
@@ -137,9 +130,9 @@ describe('test', () => {
       // @ts-ignore
       @ValidateNested({ each: true }) @Expose() @Type(() => PartOfDemo) public array: PartOfDemo[];
       // @ts-ignore
-      @ValidateNested({ each: true }) @Expose() @SetTransform(PartOfDemo) public set: Set<PartOfDemo>;
+      @ValidateNested({ each: true }) @Expose() @TransformSet(PartOfDemo) public set: Set<PartOfDemo>;
       // @ts-ignore
-      @ValidateNested({ each: true }) @Expose() @MapTransform(PartOfDemo) public map: Map<string, PartOfDemo>;
+      @ValidateNested({ each: true }) @Expose() @TransformMap(PartOfDemo) public map: Map<string, PartOfDemo>;
     }
 
     expect(await toValidateClass(DEMO, { test: 1 })).toBe(null);

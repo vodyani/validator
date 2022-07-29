@@ -1,8 +1,10 @@
-import { Class, EachValidatedKey, ValidateMetaData, RequiredKey, ValidatedKey, ClassValidateOptions } from '../common';
+import { isMap } from 'lodash';
 
-import { getReflectOwnMetadata, getReflectParamTypes } from './reflect';
-import { toValidateClass } from './validate-class';
+import { Class, EachValidatedKey, ValidateMetaData, RequiredKey, ValidatedKey, ClassValidateOptions, CustomValidatedKey } from '../common';
+
 import { isValid } from './validate';
+import { toValidateClass } from './validate-class';
+import { getReflectOwnMetadata, getReflectParamTypes } from './reflect';
 
 export function toValidateRequired(
   args: any[],
@@ -10,12 +12,27 @@ export function toValidateRequired(
   property: string,
   Mode: Class<Error>,
 ) {
-  const prams: ValidateMetaData[] = getReflectOwnMetadata(RequiredKey, target, property);
+  const metaArgs: ValidateMetaData[] = getReflectOwnMetadata(RequiredKey, target, property);
 
-  for (const { index, message } of prams) {
+  for (const { index, message } of metaArgs) {
     if (args.length < index || !isValid(args[index])) {
-      throw new Mode(message || 'missing required argument');
+      throw new Mode(message || 'missing required argument !');
     }
+  }
+}
+
+export function toCustomValidate(
+  args: any[],
+  target: any,
+  property: string,
+  Mode: Class<Error>,
+) {
+  const metaArgs: ValidateMetaData[] = getReflectOwnMetadata(CustomValidatedKey, target, property);
+
+  for (const { index, message, validator } of metaArgs) {
+    const isValidArg = validator(args[index]);
+
+    if (args.length < index || !isValidArg) throw new Mode(message);
   }
 }
 
@@ -27,17 +44,14 @@ export async function toValidated(
   options: ClassValidateOptions,
 ) {
   const types = getReflectParamTypes(target, property);
-  const prams: ValidateMetaData[] = getReflectOwnMetadata(ValidatedKey, target, property);
+  const metaArgs: ValidateMetaData[] = getReflectOwnMetadata(ValidatedKey, target, property);
 
-  for (const { index } of prams) {
+  for (const { index } of metaArgs) {
     const item = args[index];
     const type = types[index];
-
     const errorMessage = await toValidateClass(type, item, options);
 
-    if (errorMessage) {
-      throw new Mode(errorMessage);
-    }
+    if (errorMessage) throw new Mode(errorMessage);
   }
 }
 
@@ -48,21 +62,16 @@ export async function toEachValidate(
   Mode: Class<Error>,
   options: ClassValidateOptions,
 ) {
-  const prams: ValidateMetaData[] = getReflectOwnMetadata(EachValidatedKey, target, property);
+  const metaArgs: ValidateMetaData[] = getReflectOwnMetadata(EachValidatedKey, target, property);
 
-  for (const { index, type } of prams) {
-    const data = args[index];
+  for (const { index, type } of metaArgs) {
+    let data = args[index];
 
-    if (isValid(data) && data.length && type) {
-      for (const item of data) {
-        const errorMessage = await toValidateClass(type, item, options);
+    if (isMap(data)) data = data.values();
 
-        if (errorMessage) {
-          throw new Mode(errorMessage);
-        }
-      }
-    } else {
-      throw new Mode('invalid argument');
+    for (const item of data) {
+      const errorMessage = await toValidateClass(type, item, options);
+      if (errorMessage) throw new Mode(errorMessage);
     }
   }
 }
