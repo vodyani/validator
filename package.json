@@ -1,7 +1,7 @@
 {
   "name": "@vodyani/validator",
   "license": "MIT",
-  "version": "0.13.0",
+  "version": "0.14.0-beta.1",
   "author": "ChoGathK",
   "description": "🔍 validator offers simple-to-use decorators and validation techniques.",
   "homepage": "https://github.com/vodyani/validator#readme",
